@@ -23,8 +23,8 @@ function updateDescription(pokemon) {
     
     //TODO: Get and assign the front sprite, back sprite, and cry links.
     let backSprite = 'media/missingno_back.png';
-    let frontSprite = 'media/missingno_front.png'
-    let cry = 'media/missingno.ogg'
+    let frontSprite = 'media/missingno_front.png';
+    let cry = 'media/missingno.ogg';
 
     document.getElementById("back_sprite").src = backSprite;
     document.getElementById("front_sprite").src = frontSprite;

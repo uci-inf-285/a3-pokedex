@@ -44,37 +44,62 @@ class Pokemon {
     //Returns the pokemon's name.
     //E.g., returns "Bulbasaur" for Bulbasaur.
     getName() {
-        return formatString(this.poke.name);
+        if(this.poke) {
+            return formatString(this.poke.name);
+        } else {
+            return 'MissingNo';
+        }
     }
 
     //Returns a link to the pokemon's back sprite, hosted by PokeAPI.
     //E.g., returns "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png" for Bulbasaur.
     getBackSprite() {
-        return this.poke.sprites.back_default;
+        if(this.poke) {
+            return this.poke.sprites.back_default;
+        } else {
+            return 'media/missingno_back.png';
+        }
     }
 
     //Returns a link to the pokemon's front sprite, hosted by PokeAPI.
     //E.g., returns "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/1.png" for Bulbasaur.
     getFrontSprite() {
-        return this.poke.sprites.front_default;
+        if(this.poke) {
+            return this.poke.sprites.front_default;    
+        } else {
+            return 'media/missingno_front.png';
+        }
+        
     }
 
     //Returns a link to the pokemon's cry, hosted by PokeAPI.
     //E.g., returns "https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/1.ogg" for Bulbasaur.
     getCry() {
-        return this.poke.cries.latest;
+        if(this.poke) {
+            return this.poke.cries.latest;
+        } else {
+            return 'media/missingno.ogg';
+        }
     }
 
     //Returns the pokemon's height in decimeters.
     //E.g., returns 7 for Bulbasaur.
     getHeight() {
-        return this.poke.height;
+        if(this.poke) {
+            return this.poke.height;
+        } else {
+            return 3;
+        }
     }
 
     //Returns the pokemon's weight in hectograms.
     //E.g., returns 69 for Bulbasaur.
     getWeight() {
-        return this.poke.weight;
+        if(this.poke) {
+            return this.poke.weight;
+        } else {
+            return 1590;
+        }
     }
 
     //Returns the pokemon's first type, or undefined if there is not one.
@@ -100,7 +125,11 @@ class Pokemon {
     //Returns the pokemon's pokedex description.
     //E.g., returns "It can go for days without eating a single morsel. In the bulb on its back, it stores energy." for Bulbasaur.
     getPokedexDescription() {
-        return this.species.flavor_text_entries.find((text_entry) => {return text_entry.version.name == version;}).flavor_text;
+        if(this.species) {
+            return this.species.flavor_text_entries.find((text_entry) => {return text_entry.version.name == version;}).flavor_text;
+        } else {
+            return 'MissingNO appears as a bug in the original pokemon games. We\'ll fix it here!'
+        }
     }
 
     //Returns the pokemon's hp stat.
@@ -142,22 +171,30 @@ class Pokemon {
     //A helper method to look up a specific stat by name.
     //Not intended to be called directly, unless you're looking to optimize your code.
     getStat(stat) {
-        return this.poke.stats.find((s) => {return s.stat.name == stat;}).base_stat;
+        if(this.poke) {
+            return this.poke.stats.find((s) => {return s.stat.name == stat;}).base_stat;
+        } else {
+            return {'hp': 178, 'attack': 19, 'defense': 11, 'special-attack': 23, 'special-defense': 23, 'speed': 0}[stat];
+        }
     }
 
     //Returns an array of dictionaries with the moves that a pokemon can learn via level-up.
     //Not intended to be called directly, unless you're looking to optimize your code.
     getLevelUpMoves() {
         let moves = [];
-        this.poke.moves.forEach((move) => {
-            let myVersion = move.version_group_details.find((v) => {
-                return v.version_group.name == version && v.move_learn_method.name == 'level-up';
+        if(this.poke) {
+            this.poke.moves.forEach((move) => {
+                let myVersion = move.version_group_details.find((v) => {
+                    return v.version_group.name == version && v.move_learn_method.name == 'level-up';
+                });
+                if(myVersion) {
+                    myVersion.name = move.move.name;
+                    moves.push(myVersion);
+                }
             });
-            if(myVersion) {
-                myVersion.name = move.move.name;
-                moves.push(myVersion);
-            }
-        });
+        } else {
+            [{'name': 'Water Gun', 'level_learned_at': 1}, {'name': 'Water Gun', 'level_learned_at': 1}, {'name': 'Sky Attack', 'level_learned_at': 1}];
+        }
         moves.sort((moveA, moveB) => {
             if(moveA.level_learned_at != moveB.level_learned_at) {
                 return moveA.level_learned_at - moveB.level_learned_at;
